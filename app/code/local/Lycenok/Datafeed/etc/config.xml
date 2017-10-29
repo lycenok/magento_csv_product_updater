@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Lycenok_Datafeed>
+      <version>1.0</version>
+    </Lycenok_Datafeed>
+  </modules>
+  <global>
+    <models>
+      <datafeed>
+         <class>Lycenok_Datafeed_Model</class>
+      </datafeed>
+    </models>
+  </global>
+</config>  
