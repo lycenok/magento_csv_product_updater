@@ -1,4 +1,4 @@
-Availability, price, cost mass updater via CSV-file.
+Magento availability, price, cost mass updater via CSV-file.
 
 Installation:
 
@@ -15,7 +15,9 @@ Enjoy!
 
 (worked and tested on magento 1.9.3)
 
-Example of CSV (just leave columns empty, if you don't want to update):
+Example of CSV (just leave columns empty, if you don't want to update, the representation on github project page is not perfect,
+see example.csv):
+
 
 SKU,Availability,Sell Price,Cost
 GV-N1050OC-2GL,In Stock,,0
