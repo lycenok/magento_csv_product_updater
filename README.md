@@ -1,4 +1,4 @@
-Availability, price, cost mass updater via CSV-file.
+Magento availability, price, cost mass updater via CSV-file.
 
 Installation:
 
