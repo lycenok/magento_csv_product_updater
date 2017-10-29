@@ -9,7 +9,7 @@ Installation:
 
 3. Clear magento cache ("System" -> "Cache management" -> "Flush Magento Cache")
 
-4. Go to <<your url>>/Lycenok-Scripts/update-product.php
+4. Go to [your website url]/Lycenok-Scripts/update-product.php
 
 Enjoy! 
 
