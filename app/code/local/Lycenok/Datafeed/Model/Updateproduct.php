@@ -53,6 +53,7 @@ protected function processValues($values) {
     if (count($values) > 0 && count($values) < 2) {
         throw new Exception('Too few values (<2)');
     };
+    $productId = null;
     $sku = $values[0];
     $newAvailabilityId = 
       (isset($values[1]) ? getAvailabilityId($values[1]) : null);
