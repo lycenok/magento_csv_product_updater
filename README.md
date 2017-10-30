@@ -2,7 +2,7 @@ Magento availability, price, cost mass updater via CSV-file.
 
 Installation:
 
-1. Copy app and Lycenok-Sripts to magento root folder
+1. Copy app and Lycenok-Scripts to magento root folder
 
 2. If you have a PHP cache (for example, apc), restart web server 
 (e.g. apachectl graceful)
