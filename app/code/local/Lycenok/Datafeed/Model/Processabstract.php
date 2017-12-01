@@ -8,14 +8,24 @@ abstract class Lycenok_Datafeed_Model_Processabstract {
 
 public $csvReportNamePrefix = '';
 
+protected $relativeProcessUrl;
    
 /* report contents */   
-protected $csvReportContent = '';
-protected $textReportContent = '';
-protected $standardOutputFlag = true;
+protected $csvReportContents = '';
+protected $textReportContents = '';
+protected $automaticRun = false;
 protected $csvReportFileName = null;
 protected $csvReportFilePath = null;
+protected $helper;
+protected $processStartTime;
 
+
+/**
+ * Constructor. initialise attribute codes.
+*/  
+function __construct() { 
+    $this->helper = Mage::helper('lycenok_datafeed');
+} 
 
 /**
  * Process. 
@@ -47,10 +57,10 @@ public function outputReportDownloadLink($linkText=null) {
  * Output to the text report 
  */
 protected function output($string) {
-    if ($this->standardOutputFlag) { 
-        echo $string;
+    if ($this->automaticRun) { 
+        $this->textReportContents .= $string;
     } else {
-        $this->textReportContent .= $string;
+        echo $string;
     } 
 } 
 
@@ -58,51 +68,78 @@ protected function output($string) {
  * Output a string to the csv report as well as to text report
  */
 protected function outputCsv($string) { 
-    if ($this->standardOutputFlag) { 
+    if (!($this->automaticRun)) { 
         echo $string;
     }
-    $this->csvReportContent .= $string;
+    $this->csvReportContents .= $string;
 } 
 
+/**
+  *  Get working directory
+  */ 
+protected function getProcessDirectory() {
+    $processDirName = str_replace(' ', '_', $this->getProcessName());
+    $dateDirName = Mage::getModel('core/date')->date('Y-m-d');
+    $this->relativeProcessUrl = 
+      'var/lycenok/' . $dateDirName  . '/' . $processDirName;
+    $extensionDir = 
+       Mage::getBaseDir('var') . DIRECTORY_SEPARATOR . 'lycenok';
+    $dirPath = $extensionDir . DIRECTORY_SEPARATOR . $dateDirName 
+        . DIRECTORY_SEPARATOR . $processDirName;
+    if (!is_dir($dirPath)) {
+        mkdir($dirPath, 0777, true);
+    }   
+    $htaccessPath = $extensionDir . DIRECTORY_SEPARATOR . '.htaccess';
+    if (!is_file($htaccessPath)) {
+        file_put_contents($htaccessPath, 'Allow from all
+IndexOptions NameWidth=*');
+    }
+    return $dirPath;    
+}     
+
 /** 
- * Run process
+ * Run process (launches process() method inside)
 */
 public function run() { 
+    Mage::log(get_class($this) . ': run: start');
+    $this->processStartDatetime = 
+      Mage::getModel('core/date')->date('Y-m-d H:i:s');
     if (!session_id() && !headers_sent()) {
        session_start();
     }  
-    $this->csvReportContent = null;
-    $baseDir = Mage::getBaseDir('var');
-    $dirPath = $baseDir . DIRECTORY_SEPARATOR . 'lycenok' . DIRECTORY_SEPARATOR . date('Y-m-d');
-    if (!is_dir($dirPath)) {
-        echo $dirPath;
-        mkdir($dirPath, 0777, true);
-    }
+    $this->csvReportContents = null;
     if (empty($this->csvReportNamePrefix)) { 
         $this->csvReportNamePrefix = strtolower($this->getProcessName());
     } 
     if (empty($this->csvReportFileName)) { 
         $this->csvReportFileName = 
-            $this->csvReportNamePrefix . '_report_' . date('Y_m_d_H_i_s') . '.csv';
+            $this->csvReportNamePrefix . '_report_' 
+            . Mage::getModel('core/date')->date('Y_m_d_H_i_s') . '.csv';
     } 
-    $this->csvReportFilePath = $dirPath . DIRECTORY_SEPARATOR . $this->csvReportFileName;
+    $this->csvReportFilePath = 
+      $this->getProcessDirectory() . DIRECTORY_SEPARATOR . $this->csvReportFileName;
     $fileHandle = fopen($this->csvReportFilePath, 'w');
     $this->process();
-    fwrite($fileHandle, $this->csvReportContent);
+    fwrite($fileHandle, $this->csvReportContents);
     fclose($fileHandle);
+    Mage::log(get_class($this) . ': run: finish');
 } 
 
 public function crontask()
 {
-    require_once Mage::getBaseDir() . '/Lycenok-Scripts/datafeed/common.datafeed.lib.php';
-    $this->standardOutputFlag = false;
+    $this->automaticRun = true;
     $this->run();
     // send email
-    sendMail(
+    $this->helper->sendMail(
       'Datafeed report: ' . $this->getProcessName()
-    , $this->csvReportContent
-    , $this->csvReportFileName
-    , $this->textReportContent
+    , $this->textReportContents // bodyHtml
+. '<pre>' . "\n"
+. 'Base Url: ' .  rtrim(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB), '/')  . '
+Have a wonderful day!
+Sincerely yours, Datafeed.'
+. '</pre>'
+    , $this->csvReportContents  // report contents
+    , $this->csvReportFileName // report file name 
     );
 }
 
