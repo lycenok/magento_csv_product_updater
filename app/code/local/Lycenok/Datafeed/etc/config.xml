@@ -2,14 +2,19 @@
 <config>
   <modules>
     <Lycenok_Datafeed>
-      <version>1.0</version>
+      <version>1.0.0</version>
     </Lycenok_Datafeed>
   </modules>
   <global>
     <models>
-      <datafeed>
-         <class>Lycenok_Datafeed_Model</class>
-      </datafeed>
+        <lycenok_datafeed>
+             <class>Lycenok_Datafeed_Model</class>
+        </lycenok_datafeed>
     </models>
+    <helpers>
+        <lycenok_datafeed>
+            <class>Lycenok_Datafeed_Helper</class>
+        </lycenok_datafeed>
+    </helpers>
   </global>
 </config>  

@@ -102,7 +102,7 @@ public function initGoutteClient() {
 /**
   * Send mail with attachement.
 **/
-public function sendMail($subject, $bodyHtml, $csvReportContents, $csvReportName) {
+public function sendMail($subject, $bodyHtml, $csvReportContents = null, $csvReportName = null) {
     $mail = new Zend_Mail();
     $mail->setType(Zend_Mime::MULTIPART_RELATED);
     $mail->setBodyHtml($bodyHtml);
@@ -110,12 +110,14 @@ public function sendMail($subject, $bodyHtml, $csvReportContents, $csvReportName
     $mailRecipient = ($this->isProduction() ? 'sales' : 'eugene') . '@' . $this->domain;
     $mail->addTo($mailRecipient, 'Eugene');
     $mail->setSubject($subject);
-    $dir = Mage::getBaseDir();
-    $file = $mail->createAttachment($csvReportContents);
-    $file ->type        = 'text/csv';
-    $file ->disposition = Zend_Mime::DISPOSITION_INLINE;
-    $file ->encoding    = Zend_Mime::ENCODING_BASE64;
-    $file ->filename    = $csvReportName;
+    if (!empty($csvReportName)) { 
+        $dir = Mage::getBaseDir();
+        $file = $mail->createAttachment($csvReportContents);
+        $file ->type        = 'text/csv';
+        $file ->disposition = Zend_Mime::DISPOSITION_INLINE;
+        $file ->encoding    = Zend_Mime::ENCODING_BASE64;
+        $file ->filename    = $csvReportName;
+    }    
     try {
         //Confimation E-Mail Send
         $mail->send();
@@ -259,6 +261,19 @@ public function getProductAttributeVarchar($productId, $attributeCode) {
 	return	
 	  $readConnection->fetchOne(
 	    'select value from catalog_product_entity_varchar where entity_id=' . $productId . '
+		 and attribute_id = (select attribute_id from eav_attribute where attribute_code = \'' . $attributeCode . '\')'
+      );
+}
+
+/*
+  get product attribute datetime value
+*/
+public function getProductAttributeDatetime($productId, $attributeCode) {
+	$resource = Mage::getSingleton('core/resource');
+	$readConnection = $resource->getConnection('core_read');
+	return	
+	  $readConnection->fetchOne(
+	    'select value from catalog_product_entity_datetime where entity_id=' . $productId . '
 		 and attribute_id = (select attribute_id from eav_attribute where attribute_code = \'' . $attributeCode . '\')'
       );
 }

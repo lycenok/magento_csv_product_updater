@@ -68,8 +68,12 @@ protected function processValues($values) {
     };
     $productId = null;
     $sku = $values[0];
-    $newAvailabilityId = 
-      (isset($values[1]) ? $this->helper->getAvailabilityId($values[1]) : null);
+    $newAvailabilityId = null;
+    if (isset($values[1])) { 
+        if ($values[1] <> "") {
+            $newAvailabilityId = $this->helper->getAvailabilityId($values[1]);
+        } 
+    } 
     $oldAvailabilityId = null;      
     $newPrice = $this->getPriceValue($values, 2);
     $oldPrice = null;

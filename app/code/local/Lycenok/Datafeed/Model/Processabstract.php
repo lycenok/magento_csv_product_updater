@@ -75,9 +75,9 @@ protected function outputCsv($string) {
 } 
 
 /**
-  *  Get working directory
+  *  Get working directory path without creating it
   */ 
-protected function getProcessDirectory() {
+protected function getProcessDirectoryPath() {
     $processDirName = str_replace(' ', '_', $this->getProcessName());
     $dateDirName = Mage::getModel('core/date')->date('Y-m-d');
     $this->relativeProcessUrl = 
@@ -86,6 +86,14 @@ protected function getProcessDirectory() {
        Mage::getBaseDir('var') . DIRECTORY_SEPARATOR . 'lycenok';
     $dirPath = $extensionDir . DIRECTORY_SEPARATOR . $dateDirName 
         . DIRECTORY_SEPARATOR . $processDirName;
+    return $dirPath;    
+}     
+
+/**
+  *  Get working directory
+  */ 
+protected function getProcessDirectory() {
+    $dirPath = $this->getProcessDirectoryPath();
     if (!is_dir($dirPath)) {
         mkdir($dirPath, 0777, true);
     }   
@@ -113,8 +121,8 @@ public function run() {
     } 
     if (empty($this->csvReportFileName)) { 
         $this->csvReportFileName = 
-            $this->csvReportNamePrefix . '_report_' 
-            . Mage::getModel('core/date')->date('Y_m_d_H_i_s') . '.csv';
+            $this->csvReportNamePrefix 
+            . '_' . Mage::getModel('core/date')->date('Y_m_d_H_i_s') . '.csv';
     } 
     $this->csvReportFilePath = 
       $this->getProcessDirectory() . DIRECTORY_SEPARATOR . $this->csvReportFileName;
