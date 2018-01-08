@@ -31,3 +31,8 @@ M4000,Back Order - Please Call for ETA,1188,999
 P5000,Back Order - Please Call for ETA,2962,"2,499.00"
 P6000,Back Order - Please Call for ETA,7132,"6,499.00"
 
+
+
+[Example Screnshot 1 (update-product.php-example1.png)]
+
+[Example Screnshot 2 (update-product.php-example2.png)]
