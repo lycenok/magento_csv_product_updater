@@ -33,6 +33,6 @@ P6000,Back Order - Please Call for ETA,7132,"6,499.00"
 
 
 
-[Example Screnshot 1 (update-product.php-example1.png)]
+[Example Screnshot 1](update-product.php-example1.png)
 
-[Example Screnshot 2 (update-product.php-example2.png)]
+[Example Screnshot 2](update-product.php-example2.png)
